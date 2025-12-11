@@ -1,0 +1,29 @@
+# ---- Python cache ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ---- virtual env ----
+.venv/
+venv/
+
+# ---- OS / editor ----
+.DS_Store
+.idea/
+.vscode/
+
+# ---- output / temp ----
+posters/
+logs/
+*.log
+
+# ---- model artifacts (fine-tuned models, tokenizer files, etc.) ----
+models/
+*.safetensors
+*.bin
+*.pt
+
+# ---- HuggingFace cache ----
+~/.cache/huggingface/

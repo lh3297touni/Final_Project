@@ -1,0 +1,94 @@
+import os
+import base64
+import requests
+
+# FastAPI
+API_URL = "http://127.0.0.1:8000"
+
+
+def save_data_url(data_url: str, out_path: str) -> None:
+    header, b64 = data_url.split(",", 1)
+    img_bytes = base64.b64decode(b64)
+
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    with open(out_path, "wb") as f:
+        f.write(img_bytes)
+
+    print(f" Saved: {out_path}")
+
+
+def generate_and_save(endpoint: str, payload: dict, prefix: str = "poster") -> None:
+
+    url = f"{API_URL}/{endpoint.lstrip('/')}"
+    print(f" Calling API: {url}")
+    print(f" Payload: {payload}")
+
+    resp = requests.post(url, json=payload)
+    print(f" Status code: {resp.status_code}")
+    resp.raise_for_status()
+    data = resp.json()
+
+    # Case 1: generate_campaign
+    if "variants" in data:
+        print("Detected: campaign (multiple images) response")
+        variants = data["variants"]
+        out_dir = os.path.join("outputs", prefix)
+        os.makedirs(out_dir, exist_ok=True)
+
+        if not variants:
+            print(" variants is empty, nothing to save.")
+            return
+
+        for v in variants:
+            data_url = v.get("image_url")
+            variant_name = (v.get("variant") or f"variant_{v.get('id','x')}").replace(" ", "_")
+            vid = v.get("id", 0)
+
+            if not data_url:
+                print(f" Variant {vid} has no image_url, skipping.")
+                continue
+
+            filename = f"{vid}_{variant_name}.png"
+            out_path = os.path.join(out_dir, filename)
+            save_data_url(data_url, out_path)
+
+    # Case 2: generate_poster
+    elif "image_url" in data:
+        print(" Detected: single poster response")
+        data_url = data["image_url"]
+        out_dir = "outputs"
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, f"{prefix}.png")
+        save_data_url(data_url, out_path)
+
+    else:
+        print("Unknown response format, keys:", list(data.keys()))
+        raise ValueError("Unknown response format")
+
+    print("Done.")
+
+
+if __name__ == "__main__":
+    # Campaign Posters
+    campaign_payload = {
+        "summary": "A legendary Jedi rises to confront a new Sith empire threatening the galaxy.",
+        "style_hint": "Star Wars style, IMAX, SDXL, cinematic lighting, blue and purple neon, high detail"
+    }
+
+    generate_and_save(
+        endpoint="generate_campaign",
+        payload=campaign_payload,
+        prefix="starwars_campaign"
+    )
+
+    # Single Poster
+    single_poster_payload = {
+        "summary": "A lone hero walks through a neon city at night.",
+        "style_hint": "cyberpunk, SDXL, neon lights, dramatic, IMAX poster"
+    }
+
+    generate_and_save(
+        endpoint="generate_poster",
+        payload=single_poster_payload,
+        prefix="cyberpunk_poster"
+    )
