@@ -2,7 +2,7 @@
 
 _A full pipeline for generating multi-variant movie posters from text summaries using fine-tuned NLP models and HuggingFace SDXL._
 
-## 📌 Overview
+## Overview
 
 This project implements an end-to-end **movie poster campaign generation system** for APAN 5560.  
 Given a short movie summary, the system:
@@ -15,7 +15,7 @@ Given a short movie summary, the system:
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 
 ```
 User Summary
@@ -35,7 +35,7 @@ FastAPI Output (single or multi-poster campaign)
 
 ---
 
-## 📥 Model Download (Fine-Tuned DistilBERT)
+## Model Download (Fine-Tuned DistilBERT)
 
 The fine-tuned classifier is too large to host on GitHub, so it is stored externally.
 
@@ -63,7 +63,7 @@ models/
 
 ---
 
-## 🧪 Fine-Tuned Model
+## Fine-Tuned Model
 
 We fine-tuned:
 
@@ -91,7 +91,7 @@ on the **IMDB Genres dataset (`jquigl/imdb-genres`)** to classify movie summarie
 
 ---
 
-## 🎨 Image Generation — HuggingFace SDXL
+## Image Generation — HuggingFace SDXL
 
 Posters are produced using **HuggingFace InferenceClient**:
 
@@ -109,7 +109,7 @@ Outputs are encoded as base64 PNG strings for easy transport.
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 ### 1. Install dependencies
 
@@ -139,7 +139,7 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 🐳 Docker Deployment
+## Docker Deployment
 
 ### Build
 
@@ -155,11 +155,11 @@ docker run --env-file .env -p 8000:8000 movie-poster-generator
 
 ---
 
-## 📥 Downloading Posters
+## Downloading Posters
 
 After generating prompts and receiving the download links from the API, you can save the posters using the helper script.
 
-### 🖼️ Save Posters
+### Save Posters
 
 ```bash
 # Open a new terminal window
